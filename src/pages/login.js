@@ -13,7 +13,7 @@ import FacebookIconBlue from '../images/facebook-icon-blue.svg';
 import FacebookIconWhite from '../images/facebook-icon-white.png';
 
 function LoginPage() {
-  useLoginPageStyles();
+  const classes = useLoginPageStyles();
 
   return (
     <>
@@ -43,7 +43,7 @@ function LoginPage() {
               <Button
                 variant='contained'
                 fullWidth
-                colo='primary'
+                color='primary'
                 className={classes.button}
                 type='submit'
               >

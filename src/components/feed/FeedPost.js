@@ -3,7 +3,7 @@ import { useFeedPostStyles } from '../../styles';
 import UserCard from '../shared/UserCard';
 import { MoreIcon, CommentIcon, ShareIcon } from '../../icons';
 import { Link } from 'react-router-dom';
-import { Typography, Button, Hidden } from '@material-ui/core';
+import { Typography, Button, Hidden, Divider } from '@material-ui/core';
 import HTMLEllipsis from 'react-lines-ellipsis/lib/html';
 
 function FeedPost({ post }) {
@@ -16,7 +16,7 @@ function FeedPost({ post }) {
       <article className={classes.article}>
         {/* Feed Post Header goes HERE */}
         <div className={classes.postHeader}>
-          <UserCard />
+          <UserCard user={user} />
           <MoreIcon className={classes.MoreIcon} />
         </div>
         {/* FeedPost IMAGE HERE*/}
