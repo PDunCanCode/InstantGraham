@@ -8,6 +8,7 @@ import {
   LikeIcon,
   UnlikeIcon,
   RemoveIcon,
+  SaveIcon,
 } from '../../icons';
 import { Link } from 'react-router-dom';
 import {
@@ -143,7 +144,7 @@ function SaveButton() {
   const classes = useFeedPostStyles();
   const [saved, setSaved] = React.useState(false);
   const Icon = saved ? RemoveIcon : SaveIcon;
-  const onClick = saved ? handleRemove : handleSaved;
+  const onClick = saved ? handleRemove : handleSave;
 
   function handleSave() {
     console.log('saved');
