@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react';
-import { useNavbarStyles, WhiteTooltip } from '../../styles';
+import { useNavbarStyles, WhiteTooltip, RedTooltip } from '../../styles';
 import {
   AppBar,
   InputBase,
@@ -8,6 +8,7 @@ import {
   Avatar,
   Fade,
   Typography,
+  Zoom,
 } from '@material-ui/core';
 import { Link, useHistory } from 'react-router-dom';
 import logo from '../../images/logo.png';
@@ -21,6 +22,7 @@ import {
   HomeActiveIcon,
   HomeIcon,
 } from '../../icons';
+import NotificationTooltip from '../notification/NotificationTooltip';
 import { defaultCurrentUser, getDefaultUser } from '../../data';
 
 function Navbar({ minimalNavbar }) {
@@ -130,9 +132,20 @@ function Search({ history }) {
 function Links({ path }) {
   const classes = useNavbarStyles();
   const [showList, setList] = React.useState(false);
+  const [showTooltip, setShowTooltip] = React.useState(false);
+
+  React.useEffect(() => {
+    const timeout = setTimeout(handleHideTooltip, 5000);
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, []);
 
   function handleToggleList() {
     setList((prev) => !prev);
+  }
+  function handleHideTooltip() {
+    setShowTooltip(false);
   }
 
   return (
@@ -145,9 +158,17 @@ function Links({ path }) {
         <Link to='/explore'>
           {path === '/explore' ? <ExploreActiveIcon /> : <ExploreIcon />}
         </Link>
-        <div className={classes.notifications} onClick={handleToggleList}>
-          {showList ? <LikeActiveIcon /> : <LikeIcon />}
-        </div>
+        <RedTooltip
+          arrow
+          open={showTooltip}
+          onOpen={handleHideTooltip}
+          TransitionComponent={Zoom}
+          title={<NotificationTooltip />}
+        >
+          <div className={classes.notifications} onClick={handleToggleList}>
+            {showList ? <LikeActiveIcon /> : <LikeIcon />}
+          </div>
+        </RedTooltip>
         <Link to={`/${defaultCurrentUser.username}`}>
           <div
             className={

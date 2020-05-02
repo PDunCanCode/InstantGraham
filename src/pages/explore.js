@@ -1,7 +1,7 @@
-import React from "react";
+import React from 'react';
 
 function ExplorePage() {
-  return <div>ExplorePage</div>;
+  return <Layout>ExplorePage</Layout>;
 }
 
 export default ExplorePage;
