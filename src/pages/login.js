@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import { useLoginPageStyles } from '../styles';
 import SEO from '../components/shared/Seo';
 import {

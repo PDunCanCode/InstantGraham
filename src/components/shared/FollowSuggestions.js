@@ -1,9 +1,9 @@
 import React from 'react';
 import { useFollowSuggestionsStyles } from '../../styles';
-import { Typography } from '@material-ui/core';
+import { Typography, Avatar } from '@material-ui/core';
 import { LoadingLargeIcon } from '../../icons';
 import Slider from 'react-slick';
-import 'slick-carousel/slick/slick/slick.css';
+import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import { getDefaultUser } from '../../data';
 import { Link } from 'react-router-dom';
@@ -12,7 +12,7 @@ import FollowButton from './FollowButton';
 function FollowSuggestions() {
   const classes = useFollowSuggestionsStyles();
 
-  let loading = true;
+  let loading = false;
 
   return (
     <div className={classes.container}>
