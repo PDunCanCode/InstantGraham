@@ -1,6 +1,7 @@
 import React from 'react';
 import { useGridPostStyles } from '../../styles';
 import { Typography } from '@material-ui/core';
+import { useHistory } from 'react-router-dom';
 
 function GridPost({ post }) {
   const history = useHistory();

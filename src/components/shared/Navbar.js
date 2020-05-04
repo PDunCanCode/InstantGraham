@@ -141,7 +141,7 @@ function Search({ history }) {
 
 function Links({ path }) {
   const classes = useNavbarStyles();
-  const [showList, setList] = React.useState(false);
+  const [showingList, setShowingList] = React.useState(false);
   const [showTooltip, setShowTooltip] = React.useState(false);
 
   React.useEffect(() => {
@@ -152,18 +152,18 @@ function Links({ path }) {
   }, []);
 
   function handleToggleList() {
-    setList((prev) => !prev);
+    setShowingList((prev) => !prev);
   }
   function handleHideTooltip() {
     setShowTooltip(false);
   }
   function handleHideList() {
-    setList(false);
+    setShowingList(false);
   }
 
   return (
     <div className={classes.linksContainer}>
-      {showList && <NotificationList handleHideList={handleHideList} />}
+      {showingList && <NotificationList handleHideList={handleHideList} />}
       <div className={classes.linksWrapper}>
         <Hidden xsDown>
           <AddIcon />
@@ -180,7 +180,7 @@ function Links({ path }) {
           title={<NotificationTooltip />}
         >
           <div className={classes.notifications} onClick={handleToggleList}>
-            {showList ? <LikeActiveIcon /> : <LikeIcon />}
+            {showingList ? <LikeActiveIcon /> : <LikeIcon />}
           </div>
         </RedTooltip>
         <Link to={`/${defaultCurrentUser.username}`}>
