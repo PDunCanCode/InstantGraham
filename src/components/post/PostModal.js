@@ -33,7 +33,7 @@ function PostModal() {
           },
         }}
       >
-        <Post id={post.Id} />
+        <Post id={postId} />
       </Modal>
       <div onClick={() => history.goBack()} className={classes.close}>
         <CloseIcon />
