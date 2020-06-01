@@ -65,7 +65,7 @@ export const defaultCurrentUser = {
   email: 'pause.duncan@gmail.com',
   bio: 'Clovis is not THAT bad',
   phone_number: '555-555-5555',
-  posts: Array.from({ length: 10 }, () => getDefaultPost()),
+  posts: [],
   followers: [defaultUser],
   following: [defaultUser],
 };
