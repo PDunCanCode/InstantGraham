@@ -33,7 +33,7 @@ function EditProfilePage({ history }) {
     }
   }
 
-  function handleListClick() {
+  function handleListClick(index) {
     switch (index) {
       case 0:
         history.push('/accounts/edit');
@@ -57,7 +57,7 @@ function EditProfilePage({ history }) {
 
   const drawer = (
     <List>
-      {options.map((options, index) => (
+      {options.map((option, index) => (
         <ListItem
           key={option}
           button
