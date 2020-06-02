@@ -3,7 +3,7 @@ import { useSignUpPageStyles } from '../styles';
 import SEO from '../components/shared/Seo';
 import { Card, Typography, TextField, Button } from '@material-ui/core';
 import { LoginWithFacebook } from './login';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { AuthContext } from '../auth';
 
 function SignUpPage() {

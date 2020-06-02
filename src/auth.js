@@ -3,6 +3,8 @@ import 'firebase/auth';
 import 'firebase/database';
 import React, { useState, useEffect } from 'react';
 import defaultUserImage from './images/default-user-image.jpg';
+import { useMutation } from '@apollo/react-hooks';
+import { CREATE_USER } from './graphql/mutations';
 
 const provider = new firebase.auth.GoogleAuthProvider();
 
