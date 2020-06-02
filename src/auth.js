@@ -2,6 +2,7 @@ import firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/database';
 import React, { useState, useEffect } from 'react';
+import defaultUserImage from './images/default-user-image.jpg';
 
 const provider = new firebase.auth.GoogleAuthProvider();
 
@@ -21,6 +22,7 @@ export const AuthContext = React.createContext();
 
 function AuthProvider({ children }) {
   const [authState, setAuthState] = useState({ status: 'loading' });
+  const [createUser] = useMutation(CREATE_USER);
 
   useEffect(() => {
     return firebase.auth().onAuthStateChanged(async (user) => {
@@ -60,6 +62,17 @@ function AuthProvider({ children }) {
       .auth()
       .createUserWithEmailAndPassword(formData.email, formData.password);
     if (data.additionalUserInfo.isNewUser) {
+      const variable = {
+        userId: data.user.uid,
+        name: formData.name,
+        username: formData.username,
+        email: data.user.email,
+        bio: '',
+        website: '',
+        phoneNumber: '',
+        profileImage: defaultUserImage,
+      };
+      await createUser({ variable });
     }
   }
 
@@ -78,6 +91,7 @@ function AuthProvider({ children }) {
           authState,
           signInWithGoogle,
           signOut,
+          signUpWithEmailAndPassword,
         }}
       >
         {children}
