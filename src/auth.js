@@ -79,12 +79,12 @@ function AuthProvider({ children }) {
   }
 
   async function signOut() {
-    setAuthState({ status: 'loading' });
+    setAuthState({ status: 'in' });
     await firebase.auth().signOut();
     setAuthState({ status: 'out' });
   }
 
-  if (authState.status === 'loading') {
+  if (authState.status === 'in') {
     return null;
   } else {
     return (
