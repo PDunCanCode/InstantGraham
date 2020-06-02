@@ -23,7 +23,7 @@ firebase.initializeApp({
 export const AuthContext = React.createContext();
 
 function AuthProvider({ children }) {
-  const [authState, setAuthState] = useState({ status: 'loading' });
+  const [authState, setAuthState] = useState({ status: 'in' });
   const [createUser] = useMutation(CREATE_USER);
 
   useEffect(() => {
