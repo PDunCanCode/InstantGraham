@@ -1,11 +1,12 @@
-import React from 'react';
-import { useProfilePageStyles } from '../styles';
-import Layout from '../components/shared/Layout';
-import { defaultCurrentUser } from '../data';
+import React from "react";
+import { useProfilePageStyles } from "../styles";
+import Layout from "../components/shared/Layout";
+import ProfilePicture from "../components/shared/ProfilePicture";
+import { defaultCurrentUser } from "../data";
 import {
+  Hidden,
   Card,
   CardContent,
-  Hidden,
   Button,
   Typography,
   Dialog,
@@ -13,27 +14,30 @@ import {
   Divider,
   DialogTitle,
   Avatar,
-} from '@material-ui/core';
-import ProfilePicture from '../components/shared/ProfilePicture';
-import { Link } from 'react-router-dom';
-import { GearIcon } from '../icons';
-import ProfileTabs from '../components/profile/ProfileTabs';
+} from "@material-ui/core";
+import { Link, useHistory } from "react-router-dom";
+import { GearIcon } from "../icons";
+import ProfileTabs from "../components/profile/ProfileTabs";
+import { AuthContext } from "../auth";
 
 function ProfilePage() {
   const classes = useProfilePageStyles();
   const [showOptionsMenu, setOptionsMenu] = React.useState(false);
   const isOwner = true;
 
-  function handleOptionMenuClick() {
-    setOptionsMenu((prev) => !prev);
+  function handleOptionsMenuClick() {
+    setOptionsMenu(true);
+  }
+
+  function handleCloseMenu() {
+    setOptionsMenu(false);
   }
 
   return (
     <Layout
-      title={`${defaultCurrentUser.name} @${defaultCurrentUser.username}`}
+      title={`${defaultCurrentUser.name} (@${defaultCurrentUser.username})`}
     >
       <div className={classes.container}>
-        {/**  Desktop View **/}
         <Hidden xsDown>
           <Card className={classes.cardLarge}>
             <ProfilePicture isOwner={isOwner} />
@@ -41,15 +45,13 @@ function ProfilePage() {
               <ProfileNameSection
                 user={defaultCurrentUser}
                 isOwner={isOwner}
-                handleOptionMenuClick={handleOptionMenuClick}
+                handleOptionsMenuClick={handleOptionsMenuClick}
               />
               <PostCountSection user={defaultCurrentUser} />
               <NameBioSection user={defaultCurrentUser} />
             </CardContent>
           </Card>
         </Hidden>
-
-        {/**  Mobile View **/}
         <Hidden smUp>
           <Card className={classes.cardSmall}>
             <CardContent>
@@ -58,7 +60,7 @@ function ProfilePage() {
                 <ProfileNameSection
                   user={defaultCurrentUser}
                   isOwner={isOwner}
-                  handleOptionMenuClick={handleOptionMenuClick}
+                  handleOptionsMenuClick={handleOptionsMenuClick}
                 />
               </section>
               <NameBioSection user={defaultCurrentUser} />
@@ -66,26 +68,25 @@ function ProfilePage() {
             <PostCountSection user={defaultCurrentUser} />
           </Card>
         </Hidden>
-        {showOptionsMenu && <OptionMenu handleClick={handleOptionMenuClick} />}
+        {showOptionsMenu && <OptionsMenu handleCloseMenu={handleCloseMenu} />}
         <ProfileTabs user={defaultCurrentUser} isOwner={isOwner} />
       </div>
     </Layout>
   );
 }
 
-function ProfileNameSection({ user, isOwner, handleOptionMenuClick }) {
+function ProfileNameSection({ user, isOwner, handleOptionsMenuClick }) {
   const classes = useProfilePageStyles();
   const [showUnfollowDialog, setUnfollowDialog] = React.useState(false);
 
   let followButton;
   const isFollowing = true;
   const isFollower = false;
-
   if (isFollowing) {
     followButton = (
       <Button
         onClick={() => setUnfollowDialog(true)}
-        variant='outlined'
+        variant="outlined"
         className={classes.button}
       >
         Following
@@ -93,13 +94,13 @@ function ProfileNameSection({ user, isOwner, handleOptionMenuClick }) {
     );
   } else if (isFollower) {
     followButton = (
-      <Button variant='contained' color='primary' className={classes.button}>
+      <Button variant="contained" color="primary" className={classes.button}>
         Follow Back
       </Button>
     );
   } else {
     followButton = (
-      <Button variant='outlined' className={classes.button}>
+      <Button variant="contained" color="primary" className={classes.button}>
         Follow
       </Button>
     );
@@ -107,17 +108,16 @@ function ProfileNameSection({ user, isOwner, handleOptionMenuClick }) {
 
   return (
     <>
-      {/**  Desktop View **/}
       <Hidden xsDown>
         <section className={classes.usernameSection}>
           <Typography className={classes.username}>{user.username}</Typography>
           {isOwner ? (
             <>
-              <Link to='/accounts/edit'>
-                <Button variant='outlined'>Edit Profile</Button>
+              <Link to="/accounts/edit">
+                <Button variant="outlined">Edit Profile</Button>
               </Link>
               <div
-                onClick={handleOptionMenuClick}
+                onClick={handleOptionsMenuClick}
                 className={classes.settingsWrapper}
               >
                 <GearIcon className={classes.settings} />
@@ -128,8 +128,6 @@ function ProfileNameSection({ user, isOwner, handleOptionMenuClick }) {
           )}
         </section>
       </Hidden>
-
-      {/**  Mobile View **/}
       <Hidden smUp>
         <section>
           <div className={classes.usernameDivSmall}>
@@ -138,7 +136,7 @@ function ProfileNameSection({ user, isOwner, handleOptionMenuClick }) {
             </Typography>
             {isOwner && (
               <div
-                onClick={handleOptionMenuClick}
+                onClick={handleOptionsMenuClick}
                 className={classes.settingsWrapper}
               >
                 <GearIcon className={classes.settings} />
@@ -146,8 +144,8 @@ function ProfileNameSection({ user, isOwner, handleOptionMenuClick }) {
             )}
           </div>
           {isOwner ? (
-            <Link to='/accounts/edit'>
-              <Button variant='outlined' style={{ width: '100%' }}>
+            <Link to="/accounts/edit">
+              <Button variant="outlined" style={{ width: "100%" }}>
                 Edit Profile
               </Button>
             </Link>
@@ -178,25 +176,20 @@ function UnfollowDialog({ onClose, user }) {
       <div className={classes.wrapper}>
         <Avatar
           src={user.profile_image}
-          alt={`${user.username}'s Avatar`}
+          alt={`${user.username}'s avatar`}
           className={classes.avatar}
         />
       </div>
-
       <Typography
-        align='center'
+        align="center"
+        variant="body2"
         className={classes.unfollowDialogText}
-        variant='body2'
       >
-        Unfollow @{user.username}
+        Unfollow @{user.username}?
       </Typography>
-
       <Divider />
-
       <Button className={classes.unfollowButton}>Unfollow</Button>
-
       <Divider />
-
       <Button onClick={onClose} className={classes.cancelButton}>
         Cancel
       </Button>
@@ -206,7 +199,8 @@ function UnfollowDialog({ onClose, user }) {
 
 function PostCountSection({ user }) {
   const classes = useProfilePageStyles();
-  const options = ['posts', 'followers', 'following'];
+  const options = ["posts", "followers", "following"];
+
   return (
     <>
       <Hidden smUp>
@@ -222,7 +216,7 @@ function PostCountSection({ user }) {
               <Typography>{option}</Typography>
             </Hidden>
             <Hidden smUp>
-              <Typography color='textSecondary'>{option}</Typography>
+              <Typography color="textSecondary">{option}</Typography>
             </Hidden>
           </div>
         ))}
@@ -241,8 +235,8 @@ function NameBioSection({ user }) {
     <section className={classes.section}>
       <Typography className={classes.typography}>{user.name}</Typography>
       <Typography>{user.bio}</Typography>
-      <a href={user.website} target='_blank' rel='noopener noreferrer'>
-        <Typography color='secondary' className={classes.typography}>
+      <a href={user.website} target="_blank" rel="noopener noreferrer">
+        <Typography color="secondary" className={classes.typography}>
           {user.website}
         </Typography>
       </a>
@@ -250,12 +244,18 @@ function NameBioSection({ user }) {
   );
 }
 
-function OptionMenu({ handleClick }) {
+function OptionsMenu({ handleCloseMenu }) {
   const classes = useProfilePageStyles();
-  const [showLogoutMessage, setLogoutMessage] = React.useState(false);
+  const { signOut } = React.useContext(AuthContext);
+  const [showLogOutMessage, setLogOutMessage] = React.useState(false);
+  const history = useHistory();
 
-  function handleLogoutClick() {
-    setLogoutMessage((prev) => !prev);
+  function handleLogOutClick() {
+    setLogOutMessage(true);
+    setTimeout(() => {
+      signOut();
+      history.push("/accounts/login");
+    }, 2000);
   }
 
   return (
@@ -267,22 +267,22 @@ function OptionMenu({ handleClick }) {
       }}
       TransitionComponent={Zoom}
     >
-      {showLogoutMessage ? (
+      {showLogOutMessage ? (
         <DialogTitle className={classes.dialogTitle}>
           Logging Out
-          <Typography color='textSecondary'>
-            Please log back in to continue using finstagram
+          <Typography color="textSecondary">
+            You need to log back in to continue using Instagram.
           </Typography>
         </DialogTitle>
       ) : (
         <>
-          <OptionsItem text='Change Password' />
-          <OptionsItem text='Nametag' />
-          <OptionsItem text='Authorized Apps' />
-          <OptionsItem text='Notifications' />
-          <OptionsItem text='Privacy and Security' />
-          <OptionsItem text='Log out' onClick={handleLogoutClick} />
-          <OptionsItem text='Cancel' color='red' onClick={handleClick} />
+          <OptionsItem text="Change Password" />
+          <OptionsItem text="Nametag" />
+          <OptionsItem text="Authorized Apps" />
+          <OptionsItem text="Notifications" />
+          <OptionsItem text="Privacy and Security" />
+          <OptionsItem text="Log Out" onClick={handleLogOutClick} />
+          <OptionsItem text="Cancel" onClick={handleCloseMenu} />
         </>
       )}
     </Dialog>
@@ -292,7 +292,7 @@ function OptionMenu({ handleClick }) {
 function OptionsItem({ text, onClick }) {
   return (
     <>
-      <Button style={{ padding: '12px 8px' }} onClick={onClick}>
+      <Button style={{ padding: "12px 8px" }} onClick={onClick}>
         {text}
       </Button>
       <Divider />
