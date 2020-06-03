@@ -9,6 +9,7 @@ import {
   Typography,
 } from '@material-ui/core';
 import { Link } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
 import FacebookIconBlue from '../images/facebook-icon-blue.svg';
 import FacebookIconWhite from '../images/facebook-icon-white.png';
 
