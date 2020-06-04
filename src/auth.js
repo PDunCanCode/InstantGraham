@@ -23,11 +23,11 @@ firebase.initializeApp({
 export const AuthContext = React.createContext();
 
 function AuthProvider({ children }) {
-  const [authState, setAuthState] = useState({ status: 'in' });
+  const [authState, setAuthState] = React.useState({ status: 'loading' });
   const [createUser] = useMutation(CREATE_USER);
 
-  useEffect(() => {
-    return firebase.auth().onAuthStateChanged(async (user) => {
+  React.useEffect(() => {
+    firebase.auth().onAuthStateChanged(async (user) => {
       if (user) {
         const token = await user.getIdToken();
         const idTokenResult = await user.getIdTokenResult();
@@ -40,7 +40,7 @@ function AuthProvider({ children }) {
           // Check if refresh is required.
           const metadataRef = firebase
             .database()
-            .ref('metadata/' + user.uid + '/refreshTime');
+            .ref(`metadata/${user.uid}/refreshTime`);
 
           metadataRef.on('value', async (data) => {
             if (!data.exists) return;
@@ -55,8 +55,31 @@ function AuthProvider({ children }) {
     });
   }, []);
 
-  async function signInWithGoogle() {
-    await firebase.auth().signInWithPopup(provider);
+  async function logInWithGoogle() {
+    const data = await firebase.auth().signInWithPopup(provider);
+    if (data.additionalUserInfo.isNewUser) {
+      // console.log({ data });
+      const { uid, displayName, email, photoURL } = data.user;
+      const username = `${displayName.replace(/\s+/g, '')}${uid.slice(-5)}`;
+      const variables = {
+        userId: uid,
+        name: displayName,
+        username,
+        email,
+        bio: '',
+        website: '',
+        phoneNumber: '',
+        profileImage: photoURL,
+      };
+      await createUser({ variables });
+    }
+  }
+
+  async function logInWithEmailAndPassword(email, password) {
+    const data = await firebase
+      .auth()
+      .signInWithEmailAndPassword(email, password);
+    return data;
   }
 
   async function signUpWithEmailAndPassword(formData) {
@@ -64,7 +87,7 @@ function AuthProvider({ children }) {
       .auth()
       .createUserWithEmailAndPassword(formData.email, formData.password);
     if (data.additionalUserInfo.isNewUser) {
-      const variable = {
+      const variables = {
         userId: data.user.uid,
         name: formData.name,
         username: formData.username,
@@ -74,26 +97,32 @@ function AuthProvider({ children }) {
         phoneNumber: '',
         profileImage: defaultUserImage,
       };
-      await createUser({ variable });
+      await createUser({ variables });
     }
   }
 
   async function signOut() {
-    setAuthState({ status: 'in' });
+    setAuthState({ status: 'loading' });
     await firebase.auth().signOut();
     setAuthState({ status: 'out' });
   }
 
-  if (authState.status === 'in') {
+  async function updateEmail(email) {
+    await authState.user.updateEmail(email);
+  }
+
+  if (authState.status === 'loading') {
     return null;
   } else {
     return (
       <AuthContext.Provider
         value={{
           authState,
-          signInWithGoogle,
+          logInWithGoogle,
+          logInWithEmailAndPassword,
           signOut,
           signUpWithEmailAndPassword,
+          updateEmail,
         }}
       >
         {children}
