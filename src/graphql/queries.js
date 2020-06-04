@@ -1,4 +1,4 @@
-import { gql } from "apollo-boost";
+import { gql } from 'apollo-boost';
 
 export const CHECK_IF_USERNAME_TAKEN = gql`
   query checkIfUsernameTaken($username: String!) {

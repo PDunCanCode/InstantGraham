@@ -1,4 +1,4 @@
-import { gql } from 'apollo-boost';
+import { gql } from "apollo-boost";
 
 export const CREATE_USER = gql`
   mutation createUsers(
@@ -18,9 +18,35 @@ export const CREATE_USER = gql`
         website: $website
         profile_image: $profileImage
         phone_number: $phoneNumber
+        name: $name
+        email: $email
+        bio: $bio
+      }
+    ) {
+      affected_rows
+    }
+  }
+`;
+
+export const EDIT_USER = gql`
+  mutation editUser(
+    $id: uuid!
+    $name: String!
+    $username: String!
+    $website: String!
+    $bio: String!
+    $email: String!
+    $phoneNumber: String!
+  ) {
+    update_users(
+      where: { id: { _eq: $id } }
+      _set: {
+        name: $name
+        username: $username
+        website: $website
         bio: $bio
         email: $email
-        name: $name
+        phone_number: $phoneNumber
       }
     ) {
       affected_rows
