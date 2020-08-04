@@ -1,23 +1,33 @@
-import React from 'react';
-import { useNotificationListStyles } from '../../styles';
-import { defaultNotifications } from '../../data';
-import { Grid, Avatar, Typography } from '@material-ui/core';
-import { Link } from 'react-router-dom';
-import FollowButton from '../shared/FollowButton';
+import React from "react";
+import { useNotificationListStyles } from "../../styles";
+// import { defaultNotifications } from "../../data";
+import { Grid, Avatar, Typography } from "@material-ui/core";
+import { Link } from "react-router-dom";
+import FollowButton from "../shared/FollowButton";
+import useOutsideClick from "@rooks/use-outside-click";
+import { useMutation } from "@apollo/react-hooks";
+import { CHECK_NOTIFICATIONS } from "../../graphql/mutations";
+import { formatDateToNowShort } from "../../utils/formatDate";
 
-import useOutsideClick from '@rooks/use-outside-click';
-
-function NotificationList({ handleHideList }) {
-  const listContainerRef = React.useRef();
+function NotificationList({ handleHideList, notifications, currentUserId }) {
   const classes = useNotificationListStyles();
-
+  const listContainerRef = React.useRef();
   useOutsideClick(listContainerRef, handleHideList);
+  const [checkNotifications] = useMutation(CHECK_NOTIFICATIONS);
+
+  React.useEffect(() => {
+    const variables = {
+      userId: currentUserId,
+      lastChecked: new Date().toISOString(),
+    };
+    checkNotifications({ variables });
+  }, [currentUserId, checkNotifications]);
 
   return (
     <Grid ref={listContainerRef} className={classes.listContainer} container>
-      {defaultNotifications.map((notification) => {
-        const isLike = notification.type === 'like';
-        const isFollow = notification.type === 'follow';
+      {notifications.map((notification) => {
+        const isLike = notification.type === "like";
+        const isFollow = notification.type === "follow";
 
         return (
           <Grid key={notification.id} item className={classes.listItem}>
@@ -25,32 +35,38 @@ function NotificationList({ handleHideList }) {
               <div className={classes.avatarWrapper}>
                 <Avatar
                   src={notification.user.profile_image}
-                  alt='User avatar'
+                  alt="User avatar"
                 />
               </div>
-              <div classNAme={classes.nameWrapper}>
+              <div className={classes.nameWrapper}>
                 <Link to={`/${notification.user.username}`}>
-                  <Typography variant='body1'>
+                  <Typography variant="body1">
                     {notification.user.username}
                   </Typography>
                 </Link>
                 <Typography
-                  variant='body2'
-                  color='textSecondary'
+                  variant="body2"
+                  color="textSecondary"
                   className={classes.typography}
                 >
-                  {isLike && `likes your photo 4d`}
-                  {isFollow && `started following you. 6d`}
+                  {isLike &&
+                    `likes your photo. ${formatDateToNowShort(
+                      notification.created_at
+                    )}`}
+                  {isFollow &&
+                    `started following you. ${formatDateToNowShort(
+                      notification.created_at
+                    )}`}
                 </Typography>
               </div>
             </div>
             <div>
               {isLike && (
                 <Link to={`/p/${notification.post.id}`}>
-                  <Avatar src={notification.post.media} alt='post cover' />
+                  <Avatar src={notification.post.media} alt="post cover" />
                 </Link>
               )}
-              {isFollow && <FollowButton />}
+              {isFollow && <FollowButton id={notification.user.id} />}
             </div>
           </Grid>
         );
