@@ -1,17 +1,17 @@
-import React from 'react';
-import { useNavbarStyles, WhiteTooltip, RedTooltip } from '../../styles';
+import React from "react";
+import { useNavbarStyles, WhiteTooltip, RedTooltip } from "../../styles";
 import {
   AppBar,
-  InputBase,
   Hidden,
-  Grid,
+  InputBase,
   Avatar,
   Fade,
+  Grid,
   Typography,
   Zoom,
-} from '@material-ui/core';
-import { Link, useHistory } from 'react-router-dom';
-import logo from '../../images/logo.png';
+} from "@material-ui/core";
+import { Link, useHistory } from "react-router-dom";
+import logo from "../../images/logo.png";
 import {
   LoadingIcon,
   AddIcon,
@@ -19,17 +19,18 @@ import {
   LikeActiveIcon,
   ExploreIcon,
   ExploreActiveIcon,
-  HomeActiveIcon,
   HomeIcon,
-} from '../../icons';
-import NotificationTooltip from '../notification/NotificationTooltip';
-import NotificationList from '../notification/NotificationList';
-//import { defaultCurrentUser, getDefaultUser } from '../../data';
-import { useNProgress } from '@tanem/react-nprogress';
-import { useLazyQuery } from '@apollo/react-hooks';
-import { SEARCH_USERS } from '../../graphql/queries';
-import { UserContext } from '../../App';
-import AddPostDialog from '../post/AddPostDialog';
+  HomeActiveIcon,
+} from "../../icons";
+import NotificationTooltip from "../notification/NotificationTooltip";
+// import { defaultCurrentUser, getDefaultUser } from "../../data";
+import NotificationList from "../notification/NotificationList";
+import { useNProgress } from "@tanem/react-nprogress";
+import { useLazyQuery } from "@apollo/react-hooks";
+import { SEARCH_USERS } from "../../graphql/queries";
+import { UserContext } from "../../App";
+import AddPostDialog from "../post/AddPostDialog";
+import { isAfter } from "date-fns";
 
 function Navbar({ minimalNavbar }) {
   const classes = useNavbarStyles();
@@ -58,24 +59,26 @@ function Navbar({ minimalNavbar }) {
     </>
   );
 }
+
 function Logo() {
   const classes = useNavbarStyles();
 
   return (
     <div className={classes.logoContainer}>
-      <Link to='/'>
+      <Link to="/">
         <div className={classes.logoWrapper}>
-          <img src={logo} alt='Instagram' className={classes.logo} />
+          <img src={logo} alt="Instagram" className={classes.logo} />
         </div>
       </Link>
     </div>
   );
 }
+
 function Search({ history }) {
   const classes = useNavbarStyles();
   const [loading, setLoading] = React.useState(false);
   const [results, setResults] = React.useState([]);
-  const [query, setQuery] = React.useState('');
+  const [query, setQuery] = React.useState("");
   const [searchUsers, { data }] = useLazyQuery(SEARCH_USERS);
 
   const hasResults = Boolean(query) && results.length > 0;
@@ -89,12 +92,13 @@ function Search({ history }) {
       setResults(data.users);
       setLoading(false);
     }
-    //setResults(Array.from({ length: 5 }, () => getDefaultUser()));
+    // setResults(Array.from({ length: 5 }, () => getDefaultUser()));
   }, [query, data, searchUsers]);
 
   function handleClearInput() {
-    setQuery('');
+    setQuery("");
   }
+
   return (
     <Hidden xsDown>
       <WhiteTooltip
@@ -117,11 +121,11 @@ function Search({ history }) {
                 >
                   <div className={classes.resultWrapper}>
                     <div className={classes.avatarWrapper}>
-                      <Avatar src={result.profile_image} alt='user avatar' />
+                      <Avatar src={result.profile_image} alt="user avatar" />
                     </div>
                     <div className={classes.nameWrapper}>
-                      <Typography variant='body1'>{result.username}</Typography>
-                      <Typography variant='body2' color='textSecondary'>
+                      <Typography variant="body1">{result.username}</Typography>
+                      <Typography variant="body2" color="textSecondary">
                         {result.name}
                       </Typography>
                     </div>
@@ -143,7 +147,7 @@ function Search({ history }) {
               <span onClick={handleClearInput} className={classes.clearIcon} />
             )
           }
-          placeholder='Search'
+          placeholder="Search"
           value={query}
         />
       </WhiteTooltip>
@@ -156,9 +160,10 @@ function Links({ path }) {
   const newNotifications = me.notifications.filter(({ created_at }) =>
     isAfter(new Date(created_at), new Date(me.last_checked))
   );
+  const hasNotifications = newNotifications.length > 0;
   const classes = useNavbarStyles();
-  const [showingList, setShowingList] = React.useState(false);
-  const [showTooltip, setShowTooltip] = React.useState(false);
+  const [showTooltip, setTooltip] = React.useState(hasNotifications);
+  const [showList, setList] = React.useState(false);
   const [media, setMedia] = React.useState(null);
   const [showAddPostDialog, setAddPostDialog] = React.useState(false);
   const inputRef = React.useRef();
@@ -171,28 +176,33 @@ function Links({ path }) {
   }, []);
 
   function handleToggleList() {
-    setShowingList((prev) => !prev);
+    setList((prev) => !prev);
   }
+
   function handleHideTooltip() {
-    setShowTooltip(false);
+    setTooltip(false);
   }
+
   function handleHideList() {
-    setShowingList(false);
+    setList(false);
   }
+
   function openFileInput() {
     inputRef.current.click();
   }
+
   function handleAddPost(event) {
     setMedia(event.target.files[0]);
     setAddPostDialog(true);
   }
+
   function handleClose() {
     setAddPostDialog(false);
   }
 
   return (
     <div className={classes.linksContainer}>
-      {showingList && (
+      {showList && (
         <NotificationList
           notifications={me.notifications}
           handleHideList={handleHideList}
@@ -205,31 +215,34 @@ function Links({ path }) {
         )}
         <Hidden xsDown>
           <input
-            type='file'
-            style={{ display: 'none' }}
+            type="file"
+            style={{ display: "none" }}
             ref={inputRef}
             onChange={handleAddPost}
           />
           <AddIcon onClick={openFileInput} />
         </Hidden>
-        <Link to='/'>{path === '/' ? <HomeActiveIcon /> : <HomeIcon />}</Link>
-        <Link to='/explore'>
-          {path === '/explore' ? <ExploreActiveIcon /> : <ExploreIcon />}
+        <Link to="/">{path === "/" ? <HomeActiveIcon /> : <HomeIcon />}</Link>
+        <Link to="/explore">
+          {path === "/explore" ? <ExploreActiveIcon /> : <ExploreIcon />}
         </Link>
         <RedTooltip
           arrow
           open={showTooltip}
           onOpen={handleHideTooltip}
           TransitionComponent={Zoom}
-          title={<NotificationTooltip />}
+          title={<NotificationTooltip notifications={newNotifications} />}
         >
-          <div className={classes.notifications} onClick={handleToggleList}>
-            {showingList ? <LikeActiveIcon /> : <LikeIcon />}
+          <div
+            className={hasNotifications ? classes.notifications : ""}
+            onClick={handleToggleList}
+          >
+            {showList ? <LikeActiveIcon /> : <LikeIcon />}
           </div>
         </RedTooltip>
         <Link to={`/${me.username}`}>
           <div
-            className={path === `/${me.username}` ? classes.profileActive : ''}
+            className={path === `/${me.username}` ? classes.profileActive : ""}
           ></div>
           <Avatar src={me.profile_image} className={classes.profileImage} />
         </Link>
@@ -237,6 +250,7 @@ function Links({ path }) {
     </div>
   );
 }
+
 function Progress({ isAnimating }) {
   const classes = useNavbarStyles();
   const { animationDuration, isFinished, progress } = useNProgress({
@@ -263,4 +277,5 @@ function Progress({ isAnimating }) {
     </div>
   );
 }
+
 export default Navbar;
