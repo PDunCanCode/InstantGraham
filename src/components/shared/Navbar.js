@@ -152,7 +152,7 @@ function Search({ history }) {
 }
 
 function Links({ path }) {
-  const { me } = React.useContext(UserContext);
+  const { me, currentUserId } = React.useContext(UserContext);
   const newNotifications = me.notifications.filter(({ created_at }) =>
     isAfter(new Date(created_at), new Date(me.last_checked))
   );
@@ -192,7 +192,13 @@ function Links({ path }) {
 
   return (
     <div className={classes.linksContainer}>
-      {showingList && <NotificationList handleHideList={handleHideList} />}
+      {showingList && (
+        <NotificationList
+          notifications={me.notifications}
+          handleHideList={handleHideList}
+          currentUserId={currentUserId}
+        />
+      )}
       <div className={classes.linksWrapper}>
         {showAddPostDialog && (
           <AddPostDialog media={media} handleClose={handleClose} />
