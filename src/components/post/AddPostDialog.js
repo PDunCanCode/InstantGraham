@@ -12,6 +12,7 @@ import {
   Button,
   Paper,
   InputAdornment,
+  AppBar,
 } from '@material-ui/core';
 import { useAddPostDialogStyles } from '../../styles';
 import { ArrowBackIos, PinDrop } from '@material-ui/icons';
@@ -19,6 +20,7 @@ import { UserContext } from '../../App';
 import serialize from '../../utils/serialize';
 import handleImageUpload from '../../utils/handleImageUpload';
 import { CREATE_POST } from '../../graphql/mutations';
+import { useMutation } from '@apollo/react-hooks';
 
 const initialValue = [
   {
@@ -29,7 +31,7 @@ const initialValue = [
 function AddPostDialog({ media, handleClose }) {
   const classes = useAddPostDialogStyles();
   const { me, currentUserId } = React.useContext(UserContext);
-  const editor = React.useMemo(() => withReact(createeditor()), []);
+  const editor = React.useMemo(() => withReact(createEditor(), []));
   const [value, setValue] = React.useState(initialValue);
   const [location, setLocation] = React.useState('');
   const [submitting, setSubmitting] = React.useState(false);

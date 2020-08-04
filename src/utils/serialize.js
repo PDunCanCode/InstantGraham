@@ -1,13 +1,15 @@
-import { Text } from 'slate';
+import { Text } from "slate";
+import escapeHtml from "escape-html";
 
-import escapeHtml from 'escape-html';
 const serialize = (node) => {
   if (Text.isText(node)) {
     return escapeHtml(node.text);
   }
-  const children = nodechildren.map((n) => serialize(n)).join('');
+
+  const children = node.children.map((n) => serialize(n)).join("");
+
   switch (node.type) {
-    case 'paragraph':
+    case "paragraph":
       return `${children}<br>`;
     default:
       return children;

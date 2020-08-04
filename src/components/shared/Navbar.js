@@ -29,7 +29,7 @@ import { useNProgress } from '@tanem/react-nprogress';
 import { useLazyQuery } from '@apollo/react-hooks';
 import { SEARCH_USERS } from '../../graphql/queries';
 import { UserContext } from '../../App';
-import AddPostDialog from '../post/addPostDialog';
+import AddPostDialog from '../post/AddPostDialog';
 
 function Navbar({ minimalNavbar }) {
   const classes = useNavbarStyles();
