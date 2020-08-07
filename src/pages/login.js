@@ -177,6 +177,7 @@ export function LoginWithFacebook({ color, iconColor, variant }) {
         fullWidth
         color={color}
         variant={variant}
+        disabled={true}
       >
         <img
           src={facebookIcon}

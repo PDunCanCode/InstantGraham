@@ -33,6 +33,7 @@ import {
   CREATE_COMMENT,
 } from "../../graphql/mutations";
 import { formatDateToNowShort, formatPostDate } from "../../utils/formatDate";
+import Img from "react-graceful-image";
 
 function Post({ postId }) {
   const classes = usePostStyles();
@@ -49,7 +50,6 @@ function Post({ postId }) {
     likes,
     likes_aggregate,
     saved_posts,
-    user_id,
     location,
     user,
     caption,
@@ -71,7 +71,7 @@ function Post({ postId }) {
         </div>
         {/* Post Image */}
         <div className={classes.postImage}>
-          <img src={media} alt="Post media" className={classes.image} />
+          <Img src={media} alt="Post media" className={classes.image} />
         </div>
         {/* Post Buttons */}
         <div className={classes.postButtonsWrapper}>
@@ -114,7 +114,11 @@ function Post({ postId }) {
         </div>
       </article>
       {showOptionsDialog && (
-        <OptionsDialog onClose={() => setOptionsDialog(false)} />
+        <OptionsDialog
+          postId={id}
+          authorId={user.id}
+          onClose={() => setOptionsDialog(false)}
+        />
       )}
     </div>
   );
@@ -131,7 +135,7 @@ function AuthorCaption({ user, caption, createdAt }) {
         style={{ marginRight: 14, width: 32, height: 32 }}
       />
       <div style={{ display: "flex", flexDirection: "column " }}>
-        <Link to={user.username}>
+        <Link to={`/${user.username}`}>
           <Typography
             variant="subtitle2"
             component="span"
@@ -170,7 +174,7 @@ function UserComment({ comment }) {
         style={{ marginRight: 14, width: 32, height: 32 }}
       />
       <div style={{ display: "flex", flexDirection: "column " }}>
-        <Link to={comment.user.username}>
+        <Link to={`/${comment.user.username}`}>
           <Typography
             variant="subtitle2"
             component="span"

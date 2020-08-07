@@ -1,39 +1,39 @@
-import React from 'react';
-import { createEditor } from 'slate';
-import { Slate, Editable, withReact } from 'slate-react';
+import React from "react";
+import { createEditor } from "slate";
+import { Slate, Editable, withReact } from "slate-react";
+import { useAddPostDialogStyles } from "../../styles";
 import {
-  Appbar,
-  Typography,
-  Toolbar,
-  Divider,
   Dialog,
+  AppBar,
+  Toolbar,
+  Typography,
+  Button,
+  Divider,
+  Paper,
   Avatar,
   TextField,
-  Button,
-  Paper,
   InputAdornment,
-  AppBar,
-} from '@material-ui/core';
-import { useAddPostDialogStyles } from '../../styles';
-import { ArrowBackIos, PinDrop } from '@material-ui/icons';
-import { UserContext } from '../../App';
-import serialize from '../../utils/serialize';
-import handleImageUpload from '../../utils/handleImageUpload';
-import { CREATE_POST } from '../../graphql/mutations';
-import { useMutation } from '@apollo/react-hooks';
+} from "@material-ui/core";
+import { ArrowBackIos, PinDrop } from "@material-ui/icons";
+import { UserContext } from "../../App";
+import serialize from "../../utils/serialize";
+import handleImageUpload from "../../utils/handleImageUpload";
+import { useMutation } from "@apollo/react-hooks";
+import { CREATE_POST } from "../../graphql/mutations";
 
 const initialValue = [
   {
-    type: 'paragraph',
-    children: [{ text: '' }],
+    type: "paragraph",
+    children: [{ text: "" }],
   },
 ];
+
 function AddPostDialog({ media, handleClose }) {
   const classes = useAddPostDialogStyles();
   const { me, currentUserId } = React.useContext(UserContext);
-  const editor = React.useMemo(() => withReact(createEditor(), []));
+  const editor = React.useMemo(() => withReact(createEditor()), []);
   const [value, setValue] = React.useState(initialValue);
-  const [location, setLocation] = React.useState('');
+  const [location, setLocation] = React.useState("");
   const [submitting, setSubmitting] = React.useState(false);
   const [createPost] = useMutation(CREATE_POST);
 
@@ -52,15 +52,15 @@ function AddPostDialog({ media, handleClose }) {
   }
 
   return (
-    <Dialog fullscreen open onClose={handleClose}>
+    <Dialog fullScreen open onClose={handleClose}>
       <AppBar className={classes.appBar}>
         <Toolbar className={classes.toolbar}>
           <ArrowBackIos onClick={handleClose} />
-          <Typography align='center' variant='body1' className={classes.title}>
+          <Typography align="center" variant="body1" className={classes.title}>
             New Post
           </Typography>
           <Button
-            color='primary'
+            color="primary"
             className={classes.share}
             disabled={submitting}
             onClick={handleSharePost}
@@ -79,19 +79,19 @@ function AddPostDialog({ media, handleClose }) {
         >
           <Editable
             className={classes.editor}
-            placeholder='Write Your Caption...'
+            placeholder="Write your caption..."
           />
         </Slate>
         <Avatar
           src={URL.createObjectURL(media)}
           className={classes.avatarLarge}
-          variant='square'
+          variant="square"
         />
       </Paper>
       <TextField
         fullWidth
-        placeholder='Location'
-        inputProps={{
+        placeholder="Location"
+        InputProps={{
           classes: {
             root: classes.root,
             input: classes.input,

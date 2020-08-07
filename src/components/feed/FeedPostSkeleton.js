@@ -1,5 +1,5 @@
-import React from 'react';
-import { useFeedPostSkeletonStyles } from '../../styles';
+import React from "react";
+import { useFeedPostSkeletonStyles } from "../../styles";
 
 function FeedPostSkeleton() {
   const classes = useFeedPostSkeletonStyles();
@@ -13,7 +13,6 @@ function FeedPostSkeleton() {
           <div className={classes.secondaryTextSkeleton} />
         </div>
       </div>
-
       <div className={classes.mediaSkeleton} />
     </div>
   );

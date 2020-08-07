@@ -1,6 +1,6 @@
-import React from 'react';
-import { useEditProfilePageStyles } from '../styles';
-import Layout from '../components/shared/Layout';
+import React from "react";
+import { useEditProfilePageStyles } from "../styles";
+import Layout from "../components/shared/Layout";
 import {
   IconButton,
   Button,
@@ -13,21 +13,21 @@ import {
   TextField,
   Snackbar,
   Slide,
-} from '@material-ui/core';
-import { Menu } from '@material-ui/icons';
+} from "@material-ui/core";
+import { Menu } from "@material-ui/icons";
 // import { defaultCurrentUser } from "../data";
-import ProfilePicture from '../components/shared/ProfilePicture';
-import { UserContext } from '../App';
-import { useQuery, useMutation } from '@apollo/react-hooks';
-import { GET_EDIT_USER_PROFILE } from '../graphql/queries';
-import LoadingScreen from '../components/shared/LoadingScreen';
-import { useForm } from 'react-hook-form';
-import isURL from 'validator/lib/isURL';
-import isEmail from 'validator/lib/isEmail';
-import isMobilePhone from 'validator/lib/isMobilePhone';
-import { EDIT_USER, EDIT_USER_AVATAR } from '../graphql/mutations';
-import { AuthContext } from '../auth';
-import handleImageUpload from '../utils/handleImageUpload';
+import ProfilePicture from "../components/shared/ProfilePicture";
+import { UserContext } from "../App";
+import { useQuery, useMutation } from "@apollo/react-hooks";
+import { GET_EDIT_USER_PROFILE } from "../graphql/queries";
+import LoadingScreen from "../components/shared/LoadingScreen";
+import { useForm } from "react-hook-form";
+import isURL from "validator/lib/isURL";
+import isEmail from "validator/lib/isEmail";
+import isMobilePhone from "validator/lib/isMobilePhone";
+import { EDIT_USER, EDIT_USER_AVATAR } from "../graphql/mutations";
+import { AuthContext } from "../auth";
+import handleImageUpload from "../utils/handleImageUpload";
 
 function EditProfilePage({ history }) {
   const { currentUserId } = React.useContext(UserContext);
@@ -46,7 +46,7 @@ function EditProfilePage({ history }) {
   function handleSelected(index) {
     switch (index) {
       case 0:
-        return path.includes('edit');
+        return path.includes("edit");
       default:
         break;
     }
@@ -55,7 +55,7 @@ function EditProfilePage({ history }) {
   function handleListClick(index) {
     switch (index) {
       case 0:
-        history.push('/accounts/edit');
+        history.push("/accounts/edit");
         break;
       default:
         break;
@@ -63,15 +63,15 @@ function EditProfilePage({ history }) {
   }
 
   const options = [
-    'Edit Profile',
-    'Change Password',
-    'Apps and Websites',
-    'Email and SMS',
-    'Push Notifications',
-    'Manage Contacts',
-    'Privacy and Security',
-    'Login Activity',
-    'Emails from Instagram',
+    "Edit Profile",
+    "Change Password",
+    "Apps and Websites",
+    "Email and SMS",
+    "Push Notifications",
+    "Manage Contacts",
+    "Privacy and Security",
+    "Login Activity",
+    "Emails from Instagram",
   ];
 
   const drawer = (
@@ -94,20 +94,20 @@ function EditProfilePage({ history }) {
   );
 
   return (
-    <Layout title='Edit Profile'>
+    <Layout title="Edit Profile">
       <section className={classes.section}>
         <IconButton
-          edge='start'
+          edge="start"
           onClick={handleToggleDrawer}
           className={classes.menuButton}
         >
           <Menu />
         </IconButton>
         <nav>
-          <Hidden smUp implementation='css'>
+          <Hidden smUp implementation="css">
             <Drawer
-              variant='temporary'
-              anchor='left'
+              variant="temporary"
+              anchor="left"
               open={showDrawer}
               onClose={handleToggleDrawer}
               classes={{ paperAnchorLeft: classes.temporaryDrawer }}
@@ -117,11 +117,11 @@ function EditProfilePage({ history }) {
           </Hidden>
           <Hidden
             xsDown
-            implementation='css'
+            implementation="css"
             className={classes.permanentDrawerRoot}
           >
             <Drawer
-              variant='permanent'
+              variant="permanent"
               open
               classes={{
                 paper: classes.permanentDrawerPaper,
@@ -133,20 +133,20 @@ function EditProfilePage({ history }) {
           </Hidden>
         </nav>
         <main>
-          {path.includes('edit') && <EditUserInfo user={data.users_by_pk} />}
+          {path.includes("edit") && <EditUserInfo user={data.users_by_pk} />}
         </main>
       </section>
     </Layout>
   );
 }
 
-const DEFAULT_ERROR = { type: '', message: '' };
+const DEFAULT_ERROR = { type: "", message: "" };
 
 function EditUserInfo({ user }) {
   const classes = useEditProfilePageStyles();
-  const [profileImage, setProfileImage] = React.useState(user.profile_image);
-  const { register, handleSubmit } = useForm({ mode: 'onBlur' });
+  const { register, handleSubmit } = useForm({ mode: "onBlur" });
   const { updateEmail } = React.useContext(AuthContext);
+  const [profileImage, setProfileImage] = React.useState(user.profile_image);
   const [editUser] = useMutation(EDIT_USER);
   const [editUserAvatar] = useMutation(EDIT_USER_AVATAR);
   const [error, setError] = React.useState(DEFAULT_ERROR);
@@ -160,23 +160,27 @@ function EditUserInfo({ user }) {
       await editUser({ variables });
       setOpen(true);
     } catch (error) {
-      console.error('Error updating profile', error);
+      console.error("Error updating profile", error);
       handleError(error);
     }
   }
 
   function handleError(error) {
-    if (error.message.includes('users_username_key')) {
+    if (error.message.includes("users_username_key")) {
       setError({
-        type: 'username',
-        message: 'This username is already taken.',
+        type: "username",
+        message: "This username is already taken.",
       });
-    } else if (error.code.includes('auth')) {
-      setError({ type: 'email', message: error.message });
+    } else if (error.code.includes("auth")) {
+      setError({ type: "email", message: error.message });
     }
   }
+
   async function handleUpdateProfilePic(event) {
-    const url = handleImageUpload(event.target.files[0]);
+    const url = await handleImageUpload(
+      event.target.files[0],
+      "instagram-avatar"
+    );
     const variables = { id: user.id, profileImage: url };
     await editUserAvatar({ variables });
     setProfileImage(url);
@@ -191,16 +195,16 @@ function EditUserInfo({ user }) {
             {user.username}
           </Typography>
           <input
-            accept='image/*'
-            id='image'
-            type='file'
-            style={{ display: 'none' }}
+            accept="image/*"
+            id="image"
+            type="file"
+            style={{ display: "none" }}
             onChange={handleUpdateProfilePic}
           />
-          <label htmlFor='image'>
+          <label htmlFor="image">
             <Typography
-              color='primary'
-              variant='body2'
+              color="primary"
+              variant="body2"
               className={classes.typographyChangePic}
             >
               Change Profile Photo
@@ -210,17 +214,17 @@ function EditUserInfo({ user }) {
       </div>
       <form onSubmit={handleSubmit(onSubmit)} className={classes.form}>
         <SectionItem
-          name='name'
+          name="name"
           inputRef={register({
             required: true,
             minLength: 5,
             maxLength: 20,
           })}
-          text='Name'
+          text="Name"
           formItem={user.name}
         />
         <SectionItem
-          name='username'
+          name="username"
           error={error}
           inputRef={register({
             required: true,
@@ -228,21 +232,21 @@ function EditUserInfo({ user }) {
             minLength: 5,
             maxLength: 20,
           })}
-          text='Username'
+          text="Username"
           formItem={user.username}
         />
         <SectionItem
-          name='website'
+          name="website"
           inputRef={register({
             validate: (input) =>
               Boolean(input)
                 ? isURL(input, {
-                    protocols: ['http', 'https'],
+                    protocols: ["http", "https"],
                     require_protocol: true,
                   })
                 : true,
           })}
-          text='Website'
+          text="Website"
           formItem={user.website}
         />
         <div className={classes.sectionItem}>
@@ -250,11 +254,11 @@ function EditUserInfo({ user }) {
             <Typography className={classes.bio}>Bio</Typography>
           </aside>
           <TextField
-            name='bio'
+            name="bio"
             inputRef={register({
               maxLength: 120,
             })}
-            variant='outlined'
+            variant="outlined"
             multiline
             rowsMax={3}
             rows={3}
@@ -265,37 +269,37 @@ function EditUserInfo({ user }) {
         <div className={classes.sectionItem}>
           <div />
           <Typography
-            color='textSecondary'
+            color="textSecondary"
             className={classes.justifySelfStart}
           >
             Personal information
           </Typography>
         </div>
         <SectionItem
-          name='email'
+          name="email"
           error={error}
           inputRef={register({
             required: true,
             validate: (input) => isEmail(input),
           })}
-          text='Email'
+          text="Email"
           formItem={user.email}
-          type='email'
+          type="email"
         />
         <SectionItem
-          name='phoneNumber'
+          name="phoneNumber"
           inputRef={register({
             validate: (input) => (Boolean(input) ? isMobilePhone(input) : true),
           })}
-          text='Phone Number'
+          text="Phone Number"
           formItem={user.phone_number}
         />
         <div className={classes.sectionItem}>
           <div />
           <Button
-            type='submit'
-            variant='contained'
-            color='primary'
+            type="submit"
+            variant="contained"
+            color="primary"
             className={classes.justifySelfStart}
           >
             Submit
@@ -313,14 +317,14 @@ function EditUserInfo({ user }) {
   );
 }
 
-function SectionItem({ type = 'text', text, formItem, inputRef, name, error }) {
+function SectionItem({ type = "text", text, formItem, inputRef, name, error }) {
   const classes = useEditProfilePageStyles();
 
   return (
     <div className={classes.sectionItemWrapper}>
       <aside>
         <Hidden xsDown>
-          <Typography className={classes.typography} align='right'>
+          <Typography className={classes.typography} align="right">
             {text}
           </Typography>
         </Hidden>
@@ -332,7 +336,7 @@ function SectionItem({ type = 'text', text, formItem, inputRef, name, error }) {
         name={name}
         inputRef={inputRef}
         helperText={error?.type === name && error.message}
-        variant='outlined'
+        variant="outlined"
         fullWidth
         defaultValue={formItem}
         type={type}

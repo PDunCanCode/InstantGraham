@@ -1,13 +1,13 @@
-async function handleImageUpload(image) {
+async function handleImageUpload(image, uploadPreset = "instantgraham") {
   const data = new FormData();
-  data.append('file', image);
-  data.append('upload_preset', 'instantgraham');
-  data.append('cloud_name', 'pauseprogramming');
+  data.append("file", image);
+  data.append("upload_preset", uploadPreset);
+  data.append("cloud_name", "pauseprogramming");
   const response = await fetch(
-    'https://api.cloudinary.com/v1_1/pauseprogramming/image/upload',
+    "https://api.cloudinary.com/v1_1/pauseprogramming/image/upload",
     {
-      method: 'POST',
-      accept: 'application/json',
+      method: "POST",
+      accept: "application/json",
       body: data,
     }
   );
